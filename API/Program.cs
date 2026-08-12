@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddCors(options => options.AddPolicy("frontend", policy =>
-    policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "https://fe-task-flow-manager.vercel.app/")
+    policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "https://fe-task-flow-manager.vercel.app")
           .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
