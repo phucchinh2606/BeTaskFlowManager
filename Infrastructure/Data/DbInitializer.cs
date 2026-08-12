@@ -15,14 +15,14 @@ namespace Infrastructure.Data
                 var adminUser = new User
                 {
                     Id = Guid.NewGuid(),
-                    Email = "",
+                    Email = "admin@system.com",
                     FullName = "System Administrator",
                     SystemRole = SystemRole.Admin,
                     CreatedAt = DateTime.UtcNow
                 };
 
                 // Băm mật khẩu bằng hasher được truyền vào
-                adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "");
+                adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin123!@#");
 
                 await context.Users.AddAsync(adminUser);
                 await context.SaveChangesAsync();
