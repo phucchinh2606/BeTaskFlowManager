@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -8,6 +9,15 @@ namespace Infrastructure.Repositories
     {
         public ProjectRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public async Task<Project?> GetProjectWithMembersAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(p => p.ProjectMembers)
+                    .ThenInclude(pm => pm.User)
+                .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
     }
 }

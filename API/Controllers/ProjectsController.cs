@@ -1,9 +1,9 @@
-﻿using Application.Features.Projects.Commands.ArchiveProject;
-using Application.Features.Projects.Commands.CreateProject;
+﻿using Application.Features.Projects.Commands.CreateProject;
 using Application.Features.Projects.Commands.DeleteProject;
 using Application.Features.Projects.Commands.UpdateProject;
 using Application.Features.Projects.Queries.GetAllProjects;
 using Application.Features.Projects.Queries.GetProjectById;
+using Application.Features.Projects.Queries.GetProjectDetails;
 using Application.Features.Projects.Queries.GetProjectStatistics;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -46,16 +46,6 @@ namespace API.Controllers
             return Ok(new { Message = "Cập nhật thông tin dự án thành công." });
         }
 
-        [HttpPut("{id}/archive")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ArchiveProject(Guid id)
-        {
-            var command = new ArchiveProjectCommand { Id = id };
-            await _mediator.Send(command);
-
-            return Ok(new { Message = "Đã lưu trữ (archive) dự án thành công." });
-        }
-
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllProjects()
@@ -91,6 +81,22 @@ namespace API.Controllers
             var result = await _mediator.Send(query);
 
             return Ok(result);
+        }
+
+        [HttpGet("{id}/details")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetProjectDetails(Guid id)
+        {
+            try
+            {
+                var query = new GetProjectDetailsQuery { ProjectId = id };
+                var result = await _mediator.Send(query);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
         }
     }
 }
