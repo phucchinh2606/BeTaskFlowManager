@@ -19,5 +19,11 @@ namespace Infrastructure.Repositories
                     .ThenInclude(pm => pm.User)
                 .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
+
+        public async Task DeleteRangeAsync(IEnumerable<Project> projects, CancellationToken cancellationToken = default)
+        {
+            _dbSet.RemoveRange(projects);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

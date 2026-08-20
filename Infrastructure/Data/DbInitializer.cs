@@ -9,24 +9,26 @@ namespace Infrastructure.Data
     {
         public static async Task SeedAdminAsync(AppDbContext context, IPasswordHasher<User> passwordHasher)
         {
-            bool hasAdmin = await context.Users.AnyAsync(u => u.SystemRole == SystemRole.Admin);
-            if (!hasAdmin)
+            const string adminEmail = "admin@system.com";
+            var adminUser = await context.Users
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == adminEmail.ToLower());
+
+            if (adminUser == null)
             {
-                var adminUser = new User
+                adminUser = new User
                 {
                     Id = Guid.NewGuid(),
-                    Email = "admin@system.com",
+                    Email = adminEmail,
                     FullName = "System Administrator",
                     SystemRole = SystemRole.Admin,
                     CreatedAt = DateTime.UtcNow
                 };
-
-                // Băm mật khẩu bằng hasher được truyền vào
-                adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin123!@#");
-
                 await context.Users.AddAsync(adminUser);
-                await context.SaveChangesAsync();
             }
+
+            adminUser.SystemRole = SystemRole.Admin;
+            adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin123!@#");
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Features.Projects.Commands.CreateProject;
 using Application.Features.Projects.Commands.DeleteProject;
+using Application.Features.Projects.Commands.DeleteProjects;
 using Application.Features.Projects.Commands.UpdateProject;
 using Application.Features.Projects.Queries.GetAllProjects;
 using Application.Features.Projects.Queries.GetProjectById;
@@ -71,6 +72,14 @@ namespace API.Controllers
             var command = new DeleteProjectCommand { Id = id };
             await _mediator.Send(command);
             return Ok(new { Message = "Xóa dự án thành công." });
+        }
+
+        [HttpPost("bulk-delete")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProjects([FromBody] DeleteProjectsCommand command)
+        {
+            var deletedCount = await _mediator.Send(command);
+            return Ok(new { Message = $"Đã xóa {deletedCount} dự án.", DeletedCount = deletedCount });
         }
 
         [HttpGet("{id}/statistics")]

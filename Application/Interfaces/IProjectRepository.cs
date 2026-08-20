@@ -5,5 +5,6 @@ namespace Application.Interfaces
     public interface IProjectRepository : IGenericRepository<Project>
     {
         Task<Project?> GetProjectWithMembersAsync(Guid id, CancellationToken cancellationToken = default);
+        Task DeleteRangeAsync(IEnumerable<Project> projects, CancellationToken cancellationToken = default);
     }
 }
