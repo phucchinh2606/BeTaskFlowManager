@@ -12,6 +12,7 @@ namespace Application.Interfaces
         Task<IEnumerable<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken = default);
 
         Task<IEnumerable<EmployeePerformanceDto>> GetEmployeePerformanceAsync(CancellationToken cancellationToken = default);
+        Task DeleteRangeAsync(IEnumerable<User> users, CancellationToken cancellationToken = default);
         Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken);
     }
 }

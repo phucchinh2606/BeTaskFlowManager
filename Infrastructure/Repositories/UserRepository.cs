@@ -67,5 +67,11 @@ namespace Infrastructure.Repositories
         {
             return !await _dbSet.AnyAsync(u => u.Email.ToLower() == email.ToLower());
         }
+
+        public async Task DeleteRangeAsync(IEnumerable<User> users, CancellationToken cancellationToken = default)
+        {
+            _dbSet.RemoveRange(users);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

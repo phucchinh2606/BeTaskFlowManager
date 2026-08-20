@@ -1,5 +1,6 @@
 ﻿using Application.Features.Users.Commands.CreateUser;
 using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Commands.DeleteUsers;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Queries.GetEmployeePerformance;
 using Application.Features.Users.Queries.GetUserById;
@@ -79,6 +80,14 @@ namespace API.Controllers
             var command = new DeleteUserCommand { Id = id };
             await _mediator.Send(command);
             return Ok(new { Message = "Xóa người dùng thành công." });
+        }
+
+        [HttpPost("bulk-delete")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUsers([FromBody] DeleteUsersCommand command)
+        {
+            var count = await _mediator.Send(command);
+            return Ok(new { Count = count, Message = "Xóa người dùng thành công." });
         }
 
         [HttpGet("performance")]
