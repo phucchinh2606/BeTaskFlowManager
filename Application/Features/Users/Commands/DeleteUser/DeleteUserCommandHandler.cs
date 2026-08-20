@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.Enums;
 using MediatR;
 
 namespace Application.Features.Users.Commands.DeleteUser
@@ -18,6 +19,11 @@ namespace Application.Features.Users.Commands.DeleteUser
             if (user == null)
             {
                 throw new Exception($"Không tìm thấy người dùng với ID: {request.Id}");
+            }
+
+            if (user.SystemRole == SystemRole.Admin)
+            {
+                throw new InvalidOperationException("Không được phép xóa tài khoản Admin.");
             }
 
             await _userRepository.DeleteAsync(user);
