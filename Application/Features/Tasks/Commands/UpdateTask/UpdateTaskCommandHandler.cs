@@ -20,7 +20,7 @@ namespace Application.Features.Tasks.Commands.UpdateTask
             var task = await _taskRepository.GetByIdAsync(request.Id);
             if (task == null)
             {
-                throw new Exception($"Không tìm thấy công việc với ID: {request.Id}");
+                throw new KeyNotFoundException($"Không tìm thấy công việc với ID: {request.Id}");
             }
 
             // 2. Cập nhật các thông tin được phép chỉnh sửa

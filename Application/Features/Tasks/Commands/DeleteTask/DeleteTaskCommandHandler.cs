@@ -21,7 +21,7 @@ namespace Application.Features.Tasks.Commands.DeleteTask
             var task = await _taskRepository.GetByIdAsync(request.Id);
             if (task == null)
             {
-                throw new Exception($"Không tìm thấy công việc với ID: {request.Id}");
+                throw new KeyNotFoundException($"Không tìm thấy công việc với ID: {request.Id}");
             }
 
             // Xóa khỏi DB

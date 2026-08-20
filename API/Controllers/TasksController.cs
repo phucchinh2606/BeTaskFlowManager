@@ -53,7 +53,14 @@ namespace API.Controllers
                 return BadRequest(new { Message = "ID trên URL không khớp với dữ liệu gửi lên." });
             }
 
-            await _mediator.Send(command);
+            try
+            {
+                await _mediator.Send(command);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
 
             return Ok(new { Message = "Cập nhật công việc thành công." });
         }
@@ -83,7 +90,14 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteTask(Guid id)
         {
             var command = new DeleteTaskCommand { Id = id };
-            await _mediator.Send(command);
+            try
+            {
+                await _mediator.Send(command);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
 
             return Ok(new { Message = "Xóa công việc thành công." });
         }
