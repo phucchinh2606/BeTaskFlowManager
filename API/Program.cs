@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.GetConnectionString("Redis");
 
 // Add services to the container.
 

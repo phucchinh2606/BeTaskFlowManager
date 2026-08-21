@@ -15,34 +15,48 @@ namespace Infrastructure.Services
 
         public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
         {
-            var cachedData = await _cache.GetStringAsync(key, cancellationToken);
-            if (string.IsNullOrEmpty(cachedData))
+            try
             {
+                var cachedData = await _cache.GetStringAsync(key, cancellationToken);
+                if (string.IsNullOrEmpty(cachedData)) return default;
+                return JsonSerializer.Deserialize<T>(cachedData);
+            }
+            catch
+            {
+                // Nếu Redis lỗi/không kết nối được, coi như Cache Miss để app tiếp tục đọc từ Database
                 return default;
             }
-
-            return JsonSerializer.Deserialize<T>(cachedData);
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
         {
-            var options = new DistributedCacheEntryOptions();
-            if (slidingExpiration.HasValue)
+            try
             {
-                options.SetSlidingExpiration(slidingExpiration.Value);
-            }
-            else
-            {
-                options.SetAbsoluteExpiration(TimeSpan.FromMinutes(10)); // Mặc định cache 10 phút
-            }
+                var options = new DistributedCacheEntryOptions();
+                if (slidingExpiration.HasValue)
+                    options.SetSlidingExpiration(slidingExpiration.Value);
+                else
+                    options.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
-            var serializedData = JsonSerializer.Serialize(value);
-            await _cache.SetStringAsync(key, serializedData, options, cancellationToken);
+                var serializedData = JsonSerializer.Serialize(value);
+                await _cache.SetStringAsync(key, serializedData, options, cancellationToken);
+            }
+            catch
+            {
+                // Bỏ qua lỗi ghi cache
+            }
         }
 
         public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
         {
-            await _cache.RemoveAsync(key, cancellationToken);
+            try
+            {
+                await _cache.RemoveAsync(key, cancellationToken);
+            }
+            catch
+            {
+                // Bỏ qua lỗi xóa cache, không làm gián đoạn Command chính
+            }
         }
     }
 }

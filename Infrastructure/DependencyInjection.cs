@@ -28,7 +28,16 @@ namespace Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
+            // 1. Đọc chuỗi kết nối Redis từ AppSettings / Env Var, nếu không có mới dùng localhost
+            var redisConnectionString = configuration.GetConnectionString("Redis")
+                                        ?? "localhost:6379,abortConnect=false";
+
+            // 2. Đăng ký Redis Cache với chuỗi kết nối động
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+            });
+
             services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
